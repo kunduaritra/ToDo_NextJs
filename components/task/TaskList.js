@@ -18,7 +18,7 @@ const TaskList = (props) => {
 
   const addTaskHandler = (taskData) => {
     setIsFormDisplay(false);
-    setTask([...task, taskData]);
+    setTask((prevTask) => [...prevTask, taskData]);
   };
   return (
     <Fragment>

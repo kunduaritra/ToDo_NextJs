@@ -1,28 +1,25 @@
 import TaskList from "../components/task/TaskList";
-
-const DUMMY_TASKDATA = [
-  {
-    date: "10-04-24",
-    task: "Gym",
-  },
-  {
-    date: "09-04-24",
-    task: "React",
-  },
-  {
-    date: "07-04-24",
-    task: "JavaScript",
-  },
-];
+import { MongoClient } from "mongodb";
 
 export default function Home(props) {
   return <TaskList taskData={props.taskData} />;
 }
 
-export const getServerSideProps = () => {
+export const getServerSideProps = async () => {
+  const client = await MongoClient.connect(
+    "mongodb+srv://kunduaritra7:5PEC4YLPKqVS5qkD@cluster0.it4emu0.mongodb.net/todoTask?retryWrites=true&w=majority&appName=Cluster0"
+  );
+  const db = client.db();
+  const taskCollections = db.collection("todoTask");
+  const taskDatabase = await taskCollections.find().toArray();
+  console.log(taskDatabase);
   return {
     props: {
-      taskData: DUMMY_TASKDATA,
+      taskData: taskDatabase.map((val) => ({
+        id: val._id.toString(),
+        date: val.date,
+        task: val.task,
+      })),
     },
   };
 };

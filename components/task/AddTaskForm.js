@@ -4,7 +4,7 @@ const AddTaskForm = (props) => {
   const dateInputRef = useRef();
   const taskInputRef = useRef();
 
-  const addTaskHandler = (e) => {
+  const addTaskHandler = async (e) => {
     e.preventDefault();
     const dateInput = dateInputRef.current.value;
     const taskInput = taskInputRef.current.value;
@@ -13,7 +13,13 @@ const AddTaskForm = (props) => {
         date: dateInput,
         task: taskInput,
       };
-      console.log(taskInput);
+      const res = await fetch("/api/new-task", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData),
+      });
       props.addTask(taskData);
     }
   };
