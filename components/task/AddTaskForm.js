@@ -12,6 +12,7 @@ const AddTaskForm = (props) => {
       const taskData = {
         date: dateInput,
         task: taskInput,
+        completeStatus: false,
       };
       const res = await fetch("/api/new-task", {
         method: "POST",

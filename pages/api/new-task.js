@@ -4,7 +4,7 @@ async function handler(req, res) {
   if (req.method === "POST") {
     try {
       const data = req.body;
-      const { date, task } = data;
+      const { date, task, completeStatus } = data;
 
       const client = await MongoClient.connect(
         "mongodb+srv://kunduaritra7:5PEC4YLPKqVS5qkD@cluster0.it4emu0.mongodb.net/todoTask?retryWrites=true&w=majority&appName=Cluster0"

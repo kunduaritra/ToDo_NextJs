@@ -20,6 +20,26 @@ const TaskList = (props) => {
     setIsFormDisplay(false);
     setTask((prevTask) => [...prevTask, taskData]);
   };
+
+  const markedCompletedStatus = async (taskId) => {
+    const res = await fetch("/api/update-task", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ taskId }),
+    });
+    if (res.ok) {
+      setTask((prevTask) =>
+        prevTask.map((task) =>
+          task.id === taskId ? { ...task, completeStatus: true } : task
+        )
+      );
+    } else {
+      console.error("Failed to mark task as completed");
+    }
+  };
+
   return (
     <Fragment>
       <div className="ml-10 mt-4 font-bold italic">Task Details</div>
@@ -37,20 +57,24 @@ const TaskList = (props) => {
           )}
           {isFormDisplay && <AddTaskForm addTask={addTaskHandler} />}
           <ul className="mt-4 space-y-2">
-            {task.map((task, index) => (
-              <li key={index} className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="task"
-                  value={task.task}
-                  className="mr-2 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
-                <label htmlFor={`task-${index}`} className="text-lg">
-                  {task.date} - {task.task}
-                </label>
-                <MdDelete className="ml-4" onClick={deleteTaskHandler} />
-              </li>
-            ))}
+            {task.map(
+              (task, index) =>
+                !task.completeStatus && (
+                  <li key={task.id} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      name="task"
+                      value={task.task}
+                      onChange={() => markedCompletedStatus(task.id)}
+                      className="mr-2 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                    />
+                    <label htmlFor={`task-${index}`} className="text-lg">
+                      {task.date} - {task.task}
+                    </label>
+                    <MdDelete className="ml-4" onClick={deleteTaskHandler} />
+                  </li>
+                )
+            )}
           </ul>
         </div>
       </div>

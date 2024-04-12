@@ -1,6 +1,8 @@
+import { MongoClient } from "mongodb";
 import React, { Fragment } from "react";
+import { MdDelete } from "react-icons/md";
 
-const CompletedTaskPage = () => {
+const CompletedTaskPage = (props) => {
   return (
     <Fragment>
       <div className="ml-10 mt-4 font-bold italic">Task Details</div>
@@ -8,26 +10,38 @@ const CompletedTaskPage = () => {
         <div className="font-bold text-3xl">Completed Task</div>
         <div className="col-span-2">
           <ul className="mt-4 space-y-2">
-            {/* {props.taskData.map((task, index) => (
-              <li key={index} className="flex items-center">
-                <input
-                  type="checkbox"
-                  id={`task-${index}`}
-                  name="task"
-                  value={task.task}
-                  className="mr-2 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
-                <label htmlFor={`task-${index}`} className="text-lg">
-                  {task.date} - {task.task}
-                </label>
-                <MdDelete className="ml-4" onClick={deleteTaskHandler} />
-              </li>
-            ))} */}
+            {props.taskData.map(
+              (task, index) =>
+                task.completeStatus && (
+                  <li key={index} className="flex items-center line-through">
+                    {task.date} - {task.task}
+                  </li>
+                )
+            )}
           </ul>
         </div>
       </div>
     </Fragment>
   );
+};
+
+export const getServerSideProps = async () => {
+  const client = await MongoClient.connect(
+    "mongodb+srv://kunduaritra7:5PEC4YLPKqVS5qkD@cluster0.it4emu0.mongodb.net/todoTask?retryWrites=true&w=majority&appName=Cluster0"
+  );
+  const db = client.db();
+  const taskCollections = db.collection("todoTask");
+  const taskDatabase = await taskCollections.find().toArray();
+  return {
+    props: {
+      taskData: taskDatabase.map((val) => ({
+        id: val._id.toString(),
+        date: val.date,
+        task: val.task,
+        completeStatus: val.completeStatus,
+      })),
+    },
+  };
 };
 
 export default CompletedTaskPage;

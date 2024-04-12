@@ -12,13 +12,13 @@ export const getServerSideProps = async () => {
   const db = client.db();
   const taskCollections = db.collection("todoTask");
   const taskDatabase = await taskCollections.find().toArray();
-  console.log(taskDatabase);
   return {
     props: {
       taskData: taskDatabase.map((val) => ({
         id: val._id.toString(),
         date: val.date,
         task: val.task,
+        completeStatus: val.completeStatus,
       })),
     },
   };
