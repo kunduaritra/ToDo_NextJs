@@ -12,6 +12,20 @@ const TaskList = (props) => {
   const updatedTaskInputRef = useRef();
   const updatedTaskDateInputRef = useRef();
 
+  const deleteTaskHandler = async (deleteTask) => {
+    const deleteId = deleteTask.id;
+
+    const res = await fetch("/api/delete-task", {
+      method: "DELETE",
+      body: JSON.stringify(deleteId),
+    });
+    if (res.ok) {
+      setTask((prevTask) =>
+        prevTask.filter((task) => task.id !== deleteTask.id)
+      );
+    }
+  };
+
   const editTaskHandler = (task) => {
     setIsUpdating(true);
     updatedTaskInputRef.current = task.task;
